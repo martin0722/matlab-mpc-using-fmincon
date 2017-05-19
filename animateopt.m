@@ -1,4 +1,4 @@
-function M = animateopt( x0,xt,topt,xopt,uopt,thetaopt,N,rho )
+function M = animateopt( x0,xt,topt,xopt,uopt,thetaopt,Np,Nc,rho )
 %ANIMATEOPT animate the optimal state trajectory
 [toptu idx] = unique(topt);
 xoptu = xopt(idx,:); %unique(xopt,'rows');
@@ -33,7 +33,7 @@ for k=1:length(t)
     xlabel('x_1(t)','fontsize',14)
     ylabel('x_2(t)','fontsize',14)
     set(gca,'FontSize',12)
-    title([' N=',int2str(N),' \rho=',int2str(rho)])
+    title([' Np=',int2str(Np),' Nc=',int2str(Nc),' \rho=',int2str(rho)])
     scale_lim = [xopt(:,1);xopt(:,2)];
     xlim([min(scale_lim)-1 max(scale_lim)+1]);ylim([min(scale_lim)-1 max(scale_lim)+1]);
     axis square;

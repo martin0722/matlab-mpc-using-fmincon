@@ -43,18 +43,20 @@ clc
 % these parameters to see its impact on the results.
 %
 T = 10; % terminal time
-N = 5; % number of control stages
+Np = 10;
+Nc = 5;
+Ts = 0.1;
 rho = 100; % weight on missing the final target
 x0 = zeros(4,1); % initial state
-ts = 0:(T/N):T;
+ts = 0:Ts:T;
 xt = [5,3,-1*pi];
 % Options for ODE & NLP Solvers
-optODE = odeset( 'RelTol', 1e-9, 'AbsTol', 1e-9 );
+optODE = odeset( 'RelTol', 1e-5, 'AbsTol', 1e-5 );
 optNLP = optimset( 'LargeScale', 'off', 'GradObj','off', 'GradConstr','off',...
-    'DerivativeCheck', 'off', 'Display', 'iter', 'TolX', 1e-9,...
-    'TolFun', 1e-9, 'TolCon', 1e-9, 'MaxFunEvals',5000,...
-    'DiffMinChange',1e-5,'Algorithm','interior-point');
-
+    'DerivativeCheck', 'off', 'Display', 'iter', 'TolX', 1e-2,...
+    'TolFun', 1e-2, 'TolCon', 1e-2, 'MaxFunEvals',5000,...
+    'DiffMinChange',1e-2,'Algorithm','interior-point');
+% optNLP = optimoptions('fmincon','Algorithm','sqp','Display','iter');
 %% Piecewise constant control 
 % In this section, control $u$ and $\theta$ are assumed to be piecewise
 % constant in each stage of uniform length.
@@ -66,23 +68,46 @@ optNLP = optimset( 'LargeScale', 'off', 'GradObj','off', 'GradConstr','off',...
 % from Global Optimization Toolbox. main_multistart.m contains a script 
 % as a starting point.
 
-dvar0 = [repmat(0.5,1,N),repmat(-0.1,1,N),xt(1),xt(2),xt(3)]; % design variables contains $N$ pieces of 
+dvar0 = [repmat(0.5,1,Nc),zeros(1,Nc),x0(1)*ones(1,Np),x0(2)*ones(1,Np),x0(3)*ones(1,Np),x0(4)*ones(1,Np)]; % design variables contains $N$ pieces of 
 % $u$, $N$ pieces of $\theta$ and the final position
-lb = -Inf(1,2*N+3); 
-lb(1:N) = 0.5; % enforce lower bound on control signal $u$
-ub = Inf(1,2*N+3);
-ub(1:N) = 10; % enforce upper bound on control signal $u$
-
+lb = -Inf(1,2*Nc+4*Np); 
+lb(1:Nc) = 0.5; % enforce lower bound on control signal $u$
+lb(Nc+1:2*Nc) = -0.5;% enforce lower bound on control signal $theta$
+ub = Inf(1,2*Nc+4*Np);
+ub(1:Nc) = 10; % enforce upper bound on control signal $u$
+ub(Nc+1:2*Nc) = 0.5;% enforce upper bound on control signal $theta$
+topt = [];
+xopt = [];
+uopt = [];
+thetaopt = [];
+z0 = x0;
+i = 1;
+dz2 = ones(4,1);
+while i<=T/Ts && dz2(1)+dz2(2) > 0.1
+% for i = 1:T/Ts
+i/T*Ts*100
 % Sequential Approach of Dynamic Optimization
-[dvarO,JO] = fmincon(@(dvar) costfun1(x0,xt,ts,dvar,rho,N,optODE),...
-    dvar0,[],[],[],[],lb,ub,...
-    @(dvar) confun1(x0, dvar, ts, N, optODE),optNLP);
-% [dvarO,JO] = fmincon(@(dvar) costfun1(x0,xt,ts,dvar,rho,N,optODE),...
-%     dvar0,[],[],[],[],lb,ub,[],optNLP);
-% plot
-[topt,xopt,uopt,thetaopt] = plotopt1( x0,xt,N,ts,dvarO,rho,optODE );
+    [dvarO,JO] = fmincon(@(dvar) costfun1(z0,xt,ts,dvar,rho,Np,Nc,optODE),...
+        dvar0,[],[],[],[],lb,ub,...
+        @(dvar) confun1(z0, dvar, ts, Np, Nc, optODE),optNLP);
+    dvar0 = dvarO;
+    u = dvarO(1);
+    theta = dvarO(Nc+1);
+    
+    [tspan,zs] = ode15s( @(t,x)dyneqn1(t,x,u,theta,1), ...
+        [ts(i),ts(i+1)], z0, optODE );
+    z0 = zs(end,:)';
+    topt = [ topt; tspan ];
+    xopt = [ xopt; zs ];
+    uopt = [ uopt; u*ones(length(tspan),1) ];
+    thetaopt = [thetaopt; theta*ones(length(tspan),1) ];
+    dz2 = (z0 - xt).^2;
+    i = i+1;
+end
+
+plotopt1( x0,xt,topt,xopt,uopt,thetaopt,Np,Nc,rho);
 % animation
-M = animateopt( x0,xt,topt,xopt,uopt,thetaopt,N,rho );
+M = animateopt( x0,xt,topt,xopt,uopt,thetaopt,Np,Nc,rho );
 
 %% Continuous linear spline control
 % % In this section, control $u$ and $\theta$ are assumed to be continuous 

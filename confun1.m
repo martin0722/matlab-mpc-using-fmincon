@@ -1,11 +1,13 @@
-function [c, ceq] = confun1( x0, dvar, ts, N, optODE)
+function [c, ceq] = confun1( x0, dvar, ts, Np, Nc, optODE)
 %CONFUN1 constraint function for piecewise constant control
-f = myfunint1( x0,N,ts,dvar,optODE );
+f = myfunint1( x0,Np,Nc,ts,dvar,optODE );
 
-ceq(1) = dvar(2*N+1) - f(1);
-ceq(2) = dvar(2*N+2) - f(2); % for final position, the value of design 
-ceq(3) = dvar(2*N+3) - f(3);
-% ceq = [];
+% for final position, the value of design 
+ceq = zeros(1,3*Np);
+ceq(1:Np) = dvar(2*Nc+1:2*Nc+Np) - f(1,:);
+ceq(Np+1:2*Np) = dvar(2*Nc+Np+1:2*Nc+2*Np) - f(2,:);
+ceq(2*Np+1:3*Np) = dvar(2*Nc+2*Np+1:2*Nc+3*Np) - f(3,:);
+
 % varialbes must be the same as the ones come out from integration
 c = [];
 
