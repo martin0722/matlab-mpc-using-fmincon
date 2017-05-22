@@ -29,7 +29,9 @@ for k=1:length(t)
         [xoi(k,2),xoi(k,2)+uoi(k)/max(abs(uoptu))*sin(toi(k))],...
         'r','LineWidth',2); % using red dotted line to denote direction of
     % the trust, and its length is proportional to the control effort $u$
-
+    hold on
+    plotCon()
+    hold off
     xlabel('x_1(t)','fontsize',14)
     ylabel('x_2(t)','fontsize',14)
     set(gca,'FontSize',12)
@@ -38,6 +40,7 @@ for k=1:length(t)
     xlim([min(scale_lim)-1 max(scale_lim)+1]);ylim([min(scale_lim)-1 max(scale_lim)+1]);
     axis square;
     M(k) = getframe(gcf);
+    pause(0.1)
 end
 end
 

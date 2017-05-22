@@ -49,7 +49,7 @@ Ts = 0.1;
 rho = 100; % weight on missing the final target
 x0 = zeros(4,1); % initial state
 ts = 0:Ts:T;
-xt = [5,3,-1*pi];
+xt = [10,10,-1*pi,0];
 % Options for ODE & NLP Solvers
 optODE = odeset( 'RelTol', 1e-5, 'AbsTol', 1e-5 );
 optNLP = optimset( 'LargeScale', 'off', 'GradObj','off', 'GradConstr','off',...
@@ -68,14 +68,13 @@ optNLP = optimset( 'LargeScale', 'off', 'GradObj','off', 'GradConstr','off',...
 % from Global Optimization Toolbox. main_multistart.m contains a script 
 % as a starting point.
 
-dvar0 = [repmat(0.5,1,Nc),zeros(1,Nc),x0(1)*ones(1,Np),x0(2)*ones(1,Np),x0(3)*ones(1,Np),x0(4)*ones(1,Np)]; % design variables contains $N$ pieces of 
+dvar0 = [ones(1,Nc),zeros(1,Nc),x0(1)*ones(1,Np),x0(2)*ones(1,Np),x0(3)*ones(1,Np),x0(4)*ones(1,Np)]; % design variables contains $N$ pieces of 
 % $u$, $N$ pieces of $\theta$ and the final position
 lb = -Inf(1,2*Nc+4*Np); 
-lb(1:Nc) = 0.5; % enforce lower bound on control signal $u$
-lb(Nc+1:2*Nc) = -0.5;% enforce lower bound on control signal $theta$
+lb(1:Nc) = 1; % enforce lower bound on control signal $u$
 ub = Inf(1,2*Nc+4*Np);
-ub(1:Nc) = 10; % enforce upper bound on control signal $u$
-ub(Nc+1:2*Nc) = 0.5;% enforce upper bound on control signal $theta$
+ub(1:Nc) = 5; % enforce upper bound on control signal $u$
+
 topt = [];
 xopt = [];
 uopt = [];
@@ -83,9 +82,12 @@ thetaopt = [];
 z0 = x0;
 i = 1;
 dz2 = ones(4,1);
+g_lim = 0.6*9.81;
 while i<=T/Ts && dz2(1)+dz2(2) > 0.1
 % for i = 1:T/Ts
 i/T*Ts*100
+    lb(Nc+1:2*Nc) = -g_lim/dvar0(1);% enforce lower bound on control signal $theta$
+    ub(Nc+1:2*Nc) = g_lim/dvar0(1);% enforce upper bound on control signal $theta$
 % Sequential Approach of Dynamic Optimization
     [dvarO,JO] = fmincon(@(dvar) costfun1(z0,xt,ts,dvar,rho,Np,Nc,optODE),...
         dvar0,[],[],[],[],lb,ub,...
@@ -101,7 +103,7 @@ i/T*Ts*100
     xopt = [ xopt; zs ];
     uopt = [ uopt; u*ones(length(tspan),1) ];
     thetaopt = [thetaopt; theta*ones(length(tspan),1) ];
-    dz2 = (z0 - xt).^2;
+    dz2 = (z0' - xt).^2;
     i = i+1;
 end
 
