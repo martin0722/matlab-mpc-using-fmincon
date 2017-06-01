@@ -1,6 +1,6 @@
 function M = animateopt( x0,xt,topt,xopt,uopt,thetaopt,Np,Nc,rho )
 %ANIMATEOPT animate the optimal state trajectory
-[toptu idx] = unique(topt);
+[toptu, idx] = unique(topt);
 xoptu = xopt(idx,:); %unique(xopt,'rows');
 uoptu = uopt(idx);
 thetaoptu = thetaopt(idx); % remove duplicate values
@@ -11,6 +11,8 @@ haoi = xoi(:,3);
 toi = interp1(toptu,thetaoptu,t) + haoi'; % trust angle $\theta$
 
 figure;
+xc = [10 9 8 7 6 5 4 3 2 1 1];
+xc_ = interp1(1:11,xc,1:10/length(t):11);
 for k=1:length(t)
     % contruct the shape of a boat around the point with respect to 
     % heading angle
@@ -30,7 +32,8 @@ for k=1:length(t)
         'r','LineWidth',2); % using red dotted line to denote direction of
     % the trust, and its length is proportional to the control effort $u$
     hold on
-    plotCon()
+    
+    plotCon(xc_(k),5)
     hold off
     xlabel('x_1(t)','fontsize',14)
     ylabel('x_2(t)','fontsize',14)
@@ -40,7 +43,7 @@ for k=1:length(t)
     xlim([min(scale_lim)-1 max(scale_lim)+1]);ylim([min(scale_lim)-1 max(scale_lim)+1]);
     axis square;
     M(k) = getframe(gcf);
-    pause(0.2)
+    pause(0.5)
 end
 end
 
