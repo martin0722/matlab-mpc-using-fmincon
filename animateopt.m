@@ -11,7 +11,7 @@ haoi = xoi(:,3);
 toi = interp1(toptu,thetaoptu,t) + haoi'; % trust angle $\theta$
 
 figure;
-xc = [10 9 8 7 6 5 4 3 2 1 1];
+xc = [10 9 8 7 6 5 4 3 2 1 1]+2;
 xc_ = interp1(1:11,xc,1:10/length(t):11);
 for k=1:length(t)
     % contruct the shape of a boat around the point with respect to 
@@ -43,7 +43,7 @@ for k=1:length(t)
     xlim([min(scale_lim)-1 max(scale_lim)+1]);ylim([min(scale_lim)-1 max(scale_lim)+1]);
     axis square;
     M(k) = getframe(gcf);
-    pause(0.5)
+    pause(0.1)
 end
 end
 
