@@ -40,7 +40,7 @@ for k=1:length(t)
     xlim([min(scale_lim)-1 max(scale_lim)+1]);ylim([min(scale_lim)-1 max(scale_lim)+1]);
     axis square;
     M(k) = getframe(gcf);
-    pause(0.1)
+    pause(0.2)
 end
 end
 

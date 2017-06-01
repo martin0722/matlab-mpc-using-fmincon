@@ -8,6 +8,6 @@ dx1T = x1T - xt(1);
 dx2T = x2T - xt(2);
 dx3T = x3T - xt(3);
 
-J = rho*(dx1T*dx1T' + dx2T*dx2T' + 0*(dx3T*dx3T')) + 0.1*sum(f(end,:));
+J = rho*(dx1T*dx1T' + dx2T*dx2T' + 0*(dx3T*dx3T')) + 0.5*sum(f(end,:));
 
 end

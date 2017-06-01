@@ -4,6 +4,6 @@ dx = zeros(4,1);
 dx(1) = cos(x(3))*u(ks);
 dx(2) = sin(x(3))*u(ks);
 dx(3) = theta(ks);
-dx(4) = 10*u(ks)^2 + 4*theta(ks)^2;
+dx(4) = 10*u(ks)^2 + 5*theta(ks)^2;
 
 end

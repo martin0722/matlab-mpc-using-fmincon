@@ -44,8 +44,8 @@ clc
 %
 T = 10; % terminal time
 Np = 10;
-Nc = 5;
-Ts = 0.1;
+Nc = 10;
+Ts = 0.5;
 rho = 100; % weight on missing the final target
 x0 = zeros(4,1); % initial state
 ts = 0:Ts:T;
