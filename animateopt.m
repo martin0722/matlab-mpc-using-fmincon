@@ -11,8 +11,10 @@ haoi = xoi(:,3);
 toi = interp1(toptu,thetaoptu,t) + haoi'; % trust angle $\theta$
 
 figure;
-xc = [10 9 8 7 6 5 4 3 2 1 1]+2;
+xc = [10 9 8 7 6 5 4 3 2 1 1]+3;
+xc1 = [2.5 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21];
 xc_ = interp1(1:11,xc,1:10/length(t):11);
+xc1_ = interp1(1:20,xc1,1:19/length(t):20);
 for k=1:length(t)
     % contruct the shape of a boat around the point with respect to 
     % heading angle
@@ -32,7 +34,7 @@ for k=1:length(t)
         'r','LineWidth',2); % using red dotted line to denote direction of
     % the trust, and its length is proportional to the control effort $u$
     hold on
-    
+    plotCon(xc1_(k),0)
     plotCon(xc_(k),5)
     hold off
     xlabel('x_1(t)','fontsize',14)
@@ -43,7 +45,12 @@ for k=1:length(t)
     xlim([min(scale_lim)-1 max(scale_lim)+1]);ylim([min(scale_lim)-1 max(scale_lim)+1]);
     axis square;
     M(k) = getframe(gcf);
-    pause(0.1)
 end
+vid = VideoWriter('simulation');
+vid.Quality = 100;
+vid.FrameRate = 8;
+open(vid)
+writeVideo(vid,M);
+close(vid)
 end
 

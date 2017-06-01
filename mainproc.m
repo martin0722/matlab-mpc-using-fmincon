@@ -1,10 +1,3 @@
-%% Optimal Control Using Control Vector Parameterization
-% Control vector parameterization, also known as direct sequential method, 
-% is one of the direct optimization methods for solving optimal control 
-% problems. The basic idea of direct optimization methods is to discretize
-% the control problem, and then apply nonlinear programming (NLP) 
-% techniques to the resulting finite-dimensional optimization problem.
-
 clear
 clc
 %% Parameter Configurations
@@ -12,20 +5,20 @@ clc
 % Remarks: $N$, $\rho$ and $\beta$ are chosen arbitrarily. One can vary 
 % these parameters to see its impact on the results.
 %
-T = 5; % terminal time
+T = 4; % terminal time
 Np = 20;
 Nc = 20;
-Ts = 0.25;
-rho = 1; % weight on missing the final target
+Ts = 0.2;
+rho = 5; % weight on missing the final target
 x0 = zeros(4,1); % initial state
 ts = 0:Ts:T;
 xt = [10,10,-1*pi];
 % Options for ODE & NLP Solvers
 optODE = odeset( 'RelTol', 1e-5, 'AbsTol', 1e-5 );
 optNLP = optimset( 'LargeScale', 'off', 'GradObj','off', 'GradConstr','off',...
-    'DerivativeCheck', 'off', 'Display', 'iter', 'TolX', 1e-2,...
-    'TolFun', 1e-2, 'TolCon', 1e-2, 'MaxFunEvals',5000,...
-    'DiffMinChange',1e-2,'Algorithm','interior-point');
+    'DerivativeCheck', 'off', 'Display', 'iter', 'TolX', 1e-1,...
+    'TolFun', 1e-1, 'TolCon', 1e-1, 'MaxFunEvals',5000,...
+    'DiffMinChange',1e-1,'Algorithm','interior-point');
 % optNLP = optimoptions('fmincon','Algorithm','sqp','Display','iter');
 %% Piecewise constant control 
 % In this section, control $u$ and $\theta$ are assumed to be piecewise
@@ -41,7 +34,7 @@ optNLP = optimset( 'LargeScale', 'off', 'GradObj','off', 'GradConstr','off',...
 dvar0 = [ones(1,Nc),zeros(1,Nc),x0(1)*ones(1,Np),x0(2)*ones(1,Np),x0(3)*ones(1,Np)]; % design variables contains $N$ pieces of 
 % $u$, $N$ pieces of $\theta$ and the final position
 lb = -Inf(1,2*Nc+3*Np); 
-lb(1:Nc) = 1; % enforce lower bound on control signal $u$
+lb(1:Nc) = 0.1; % enforce lower bound on control signal $u$
 ub = Inf(1,2*Nc+3*Np);
 ub(1:Nc) = 5; % enforce upper bound on control signal $u$
 
@@ -51,15 +44,10 @@ uopt = [];
 thetaopt = [];
 z0 = x0;
 
-
-
-% lb(Nc+1:2*Nc) = -g_lim/dvar0(1);% enforce lower bound on control signal $theta$
-% ub(Nc+1:2*Nc) = g_lim/dvar0(1);% enforce upper bound on control signal $theta$
 % Sequential Approach of Dynamic Optimization
 [dvarO,JO] = fmincon(@(dvar) costfun1(z0,xt,ts,dvar,rho,Np,Nc,optODE),...
     dvar0,[],[],[],[],lb,ub,...
     @(dvar) confun1(z0, dvar, ts, Np, Nc, optODE),optNLP);
-
 
 for i = 1:T/Ts
     u = dvarO(i);
