@@ -12,7 +12,7 @@ toi = interp1(toptu,thetaoptu,t) + haoi'; % trust angle $\theta$
 
 figure;
 xc = [10 9 8 7 6 5 4 3 2 1 1]+3;
-xc1 = [2.5 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21];
+xc1 = [2.5 2.6 2.7 2.8 2.9 3 3.1 3.2 3.3 3.4 3.5 3.6 3.7 3.8 4 4.2 4.4 4.6 4.8 5];
 xc_ = interp1(1:11,xc,1:10/length(t):11);
 xc1_ = interp1(1:20,xc1,1:19/length(t):20);
 for k=1:length(t)
@@ -46,7 +46,7 @@ for k=1:length(t)
     axis square;
     M(k) = getframe(gcf);
 end
-vid = VideoWriter('simulation');
+vid = VideoWriter(['simulation', num2str(rand(1,1))]);
 vid.Quality = 100;
 vid.FrameRate = 8;
 open(vid)
