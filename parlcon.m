@@ -4,7 +4,7 @@ if (b <= a)
     error('Give a rectangle a < b')
 end
 
-c = [x-b;x-a];
+c = [x-b;a-x];
 
 cout = max(c);
 
