@@ -26,6 +26,7 @@ switch numlane
         c = min(F);
     otherwise
         c = [];
+end
 
 end
 

@@ -8,15 +8,15 @@ Nc = 20;
 Ts = T/Np;
 rho = 3; % weight on missing the final target
 % x0 = [3.5/2;-12;0.5*pi;0]; % initial state
-x0 = [10.5/2;-12;0.5*pi;0]; % initial state
+x0 = [3.5/2;-12;0.5*pi;0]; % initial state
 ts = 0:Ts:T;
-xt = lanedest(4);
+xt = lanedest(2);
 % Options for ODE & NLP Solvers
 optODE = odeset( 'RelTol', 1e-5, 'AbsTol', 1e-5 );
 optNLP = optimset( 'LargeScale', 'off', 'GradObj','off', 'GradConstr','off',...
     'DerivativeCheck', 'off', 'Display', 'iter', 'TolX', 1e-2,...
-    'TolFun', 1e-2, 'TolCon', 1e-2, 'MaxFunEvals',5000,...
-    'DiffMinChange',1e-2,'Algorithm','interior-point');
+    'TolFun', 1e-2, 'TolCon', 1e-6, 'MaxFunEvals',7000,...
+    'DiffMinChange',1e-4,'Algorithm','interior-point');
 
 %% Piecewise constant control 
 

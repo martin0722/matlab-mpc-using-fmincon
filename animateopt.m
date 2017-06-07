@@ -11,7 +11,7 @@ haoi = xoi(:,3);
 toi = interp1(toptu,thetaoptu,t) + haoi'; % trust angle $\theta$
 
 figure;
-xc = -9.5:6.5/(length(t)-1):-3;
+xc = 12:-15/(length(t)-1):-3;
 
 for k=1:length(t)
     % contruct the shape of a boat around the point with respect to 
@@ -32,8 +32,8 @@ for k=1:length(t)
         'r','LineWidth',2); % using red dotted line to denote direction of
     % the trust, and its length is proportional to the control effort $u$
     hold on
-    plotCon(10.5/2,xc(k))
-    plotlane()
+    plotCon(xc(k),3.5/2)
+    plotlane(1)
     hold off
     xlabel('x_1(t)','fontsize',14)
     ylabel('x_2(t)','fontsize',14)
