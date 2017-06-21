@@ -1,9 +1,5 @@
 function [] = plotlane(numlane)
 
-x = [0 0 nan -12 12 nan 7 7 nan -7 -7 nan -12 12 nan -12 12];
-y = [-12 12 nan 0 0 nan -12 12 nan -12 12 nan 7 7 nan -7 -7];
-x_ = [-3.5 -3.5 nan 3.5 3.5 nan -12 12 nan -12 12];
-y_ = [-12 12 nan -12 12 nan -3.5 -3.5 nan 3.5 3.5];
 
 switch numlane
     case 1
@@ -28,7 +24,18 @@ switch numlane
         xc = [];
         yc = [];
 end
-plot(x,y,'k',x_,y_,'--k')
+plot([-7 -7 -12],[12 7 7],'k')
+plot([7 7 12],[12 7 7],'k')
+plot([7 7 12],[-12 -7 -7],'k')
+plot([-7 -7 -12],[-12 -7 -7],'k')
+plot([0 0],[-12 -7],'k')
+plot([0 0],[12 7],'k')
+plot([12 7],[0 0],'k')
+plot([-12 -7],[0 0],'k')
+plot([-12 -7 nan 7 12],[-3.5 -3.5 nan -3.5 -3.5],'--k')
+plot([-12 -7 nan 7 12],-1*[-3.5 -3.5 nan -3.5 -3.5],'--k')
+plot([-3.5 -3.5 nan -3.5 -3.5],[-12 -7 nan 7 12],'--k')
+plot(-1*[-3.5 -3.5 nan -3.5 -3.5],[-12 -7 nan 7 12],'--k')
 plot(xc,yc,'r','LineWidth',2)
 
 
